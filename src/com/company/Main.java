@@ -3,11 +3,9 @@ package com.company;
 import com.company.classloaders.ApiClassloader;
 import com.company.classloaders.AppClassloader;
 import com.company.classloaders.ImplClassloader;
-import com.company.classloaders.api.Calculator;
-import com.company.classloaders.app.MyApp;
+import com.company.classloaders.app.App;
 import com.company.classloaders.impl.CalculatorImpl;
 
-import java.io.File;
 import java.io.IOException;
 
 public class Main {
@@ -16,21 +14,24 @@ public class Main {
     private static final String PATH_TO_BIN_APP = ".\\.\\.\\out\\production\\JavaSchool\\com\\company\\classloaders\\app\\";
     private static final String PATH_TO_BIN_API = ".\\.\\.\\out\\production\\JavaSchool\\com\\company\\classloaders\\api\\";
 
-    public static void main(String[] args) throws ClassNotFoundException, IOException {
-        ImplClassloader implClassloader = new ImplClassloader(ClassLoader.getSystemClassLoader(), PATH_TO_BIN_IMPL);
-        AppClassloader appClassloader = new AppClassloader(ClassLoader.getSystemClassLoader(), PATH_TO_BIN_APP);
-        ApiClassloader apiClassloader = new ApiClassloader(ClassLoader.getSystemClassLoader(), PATH_TO_BIN_API);
+    public static void main(String[] args) throws ClassNotFoundException, IOException, IllegalAccessException, InstantiationException {
 
-        apiClassloader.loadClazz("com.company.classloaders.api.Calculator");
-        Calculator calculator = new CalculatorImpl();
-        System.out.println(calculator.getClass().getClassLoader());
+        ApiClassloader apiClassloader = new ApiClassloader(new String[] {PATH_TO_BIN_API});
+        Class clazzCalculator = Class.forName("com.company.classloaders.api.Calculator",true, apiClassloader);
 
-//        implClassloader.loadClazz("com.company.classloaders.impl.CalculatorImpl");
-//        CalculatorImpl calculatorImpl = new CalculatorImpl();
-//        System.out.println(CalculatorImpl.class.getClassLoader());
+        ImplClassloader implClassloader = new ImplClassloader(new String[] {PATH_TO_BIN_IMPL});
+        Class clazzCalculatorImpl = Class.forName("com.company.classloaders.impl.CalculatorImpl",true, implClassloader);
+//        CalculatorImpl calculatorImpl = (CalculatorImpl) clazzCalculatorImpl.newInstance();
+        System.out.println(clazzCalculatorImpl.newInstance().getClass().getClassLoader());
 
-//        appClassloader.loadClazz("com.company.classloaders.app.MyApp");
-//        MyApp myApp = new MyApp();
-//        System.out.println(MyApp.class.getClassLoader());
+        AppClassloader appClassloader = new AppClassloader(new String[] {PATH_TO_BIN_APP});
+        Class clazzApp = Class.forName("com.company.classloaders.app.App",true, appClassloader);
+//        App app = (App) clazzApp.newInstance();
+        System.out.println(clazzApp.newInstance().getClass().getClassLoader());
+
+        AppClassloader appClassloader1 = new AppClassloader(new String[] {PATH_TO_BIN_APP});
+        Class clazzApp1 = Class.forName("com.company.classloaders.app.MyApp",true, appClassloader);
+//        App app = (App) clazzApp.newInstance();
+        System.out.println(clazzApp1.newInstance().getClass().getClassLoader());
     }
 }

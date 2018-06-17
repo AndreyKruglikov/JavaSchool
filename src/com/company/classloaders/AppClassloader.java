@@ -1,8 +1,8 @@
 package com.company.classloaders;
 
-public class AppClassloader extends ApiClassloader {
+public class AppClassloader extends ApiClassloader{
 
-    public AppClassloader(ClassLoader parent, String pathToBin) {
-        super(parent, pathToBin);
+    public AppClassloader(String[] classPath) {
+        super(classPath);
     }
 }
