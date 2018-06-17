@@ -5,11 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ApiClassloader extends ClassLoader
 {
-    private Map classesHash = new java.util.HashMap();
+    private Map classesHash = new HashMap();
     public final String[] classPath;
 
     public ApiClassloader(String[] classPath) {
@@ -29,7 +30,7 @@ public class ApiClassloader extends ClassLoader
             return result;
         }
         File file = findFile(name.replace('.','/'),".class");
-        if (true) {
+        if (file == null) {
             return findSystemClass(name);
         }
         try {
@@ -37,7 +38,7 @@ public class ApiClassloader extends ClassLoader
             name = name.replaceAll("/", ".");
             result = defineClass(name, classBytes,0, classBytes.length);
         } catch (IOException e) {
-            throw new ClassNotFoundException("Cannot load class "  +name + ": " + e);
+            throw new ClassNotFoundException("Cannot load class "  + name + ": " + e);
         } catch (ClassFormatError e) {
             throw new ClassNotFoundException("Format of class file incorrect for class " + name + ": " + e);
         }
